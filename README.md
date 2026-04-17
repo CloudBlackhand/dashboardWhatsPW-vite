@@ -1,26 +1,31 @@
-# WhatsPW — Dashboard UI (`dashboardWhatsPW-vite`)
+# WhatsPW — dashboard-new
 
-Código fonte: **Vite + React + TanStack Table**. O site estático servido pelo WAHA é gerado no repo **[dashboardWhatsPW](https://github.com/CloudBlackhand/dashboardWhatsPW)** pela Action **Publish dashboard build** (faz checkout deste repo, `npm run build`, copia `dist/` para a raiz).
+Painel estático (Vite + React + **TanStack Table**), pensado para o mesmo fluxo do WAHA: ficheiros em `/dashboard` na imagem Docker, via `waha.config.json` → `repo` + `ref` (ZIP do GitHub).
 
 ## Desenvolvimento
 
 ```bash
 npm install
+# WAHA a correr localmente; ajusta a porta se precisares
 npm run dev
 ```
 
-Abre `http://localhost:5173/dashboard/` (com WAHA a correr; vê `.env.example` para `VITE_WAHA_API_KEY` e proxy).
+Abre `http://localhost:5173/dashboard/` (atenção ao sufixo `/dashboard/` — alinha com `base` do Vite).
 
-## Depois de alterares o código
+Opcional: copia `.env.example` para `.env` e define `VITE_WAHA_API_KEY` se o teu WAHA exigir chave.
 
-1. `git push` para `main` **neste** repo.
-2. No repo **dashboardWhatsPW** → **Actions** → **Publish dashboard build** → **Run workflow**.
-3. Atualiza `waha.config.json` → `dashboard.ref` no [WhatsPW](https://github.com/CloudBlackhand/WhatsPW) e redeploy.
-
-## Build local
+## Build (artefacto para o WAHA)
 
 ```bash
 npm run build
 ```
 
-Saída em `dist/` (o mesmo que a Action publica).
+O conteúdo a publicar no repositório GitHub usado pelo Docker é o interior de **`dist/`** (deve existir `index.html` na raiz do ZIP, como no dashboard antigo).
+
+## Integração com o WAHA
+
+1. Faz commit do conteúdo de `dist/` no repo referenciado por `waha.dashboard.repo` (ou cria release/CI que o faça).
+2. Atualiza `waha.config.json` → `waha.dashboard.ref` para o SHA desse commit.
+3. Rebuild da imagem WAHA / redeploy.
+
+O projeto antigo em `../dashboard/` continua útil como referência de rotas e comportamento da API.

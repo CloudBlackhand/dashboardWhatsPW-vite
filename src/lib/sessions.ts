@@ -1,8 +1,22 @@
 import type { SessionRow } from './types';
 
 const MOCK: SessionRow[] = [
-  { name: 'default', status: 'STOPPED' },
-  { name: 'demo', status: 'WORKING' },
+  {
+    name: 'default',
+    status: 'STOPPED',
+    presence: 'OFFLINE',
+    me: { pushName: 'Conta demo', jid: '5511999999999@s.whatsapp.net' },
+    timestamps: { activity: null },
+  },
+  {
+    name: 'vendas',
+    status: 'WORKING',
+    presence: 'ONLINE',
+    assignedWorker: 'worker-1',
+    me: { pushName: 'Loja', jid: '5511888888888@s.whatsapp.net' },
+    config: { metadata: { departamento: 'comercial' } },
+    timestamps: { activity: Date.now() - 3600_000 },
+  },
 ];
 
 function headers(): HeadersInit {
@@ -14,8 +28,9 @@ function headers(): HeadersInit {
   return h;
 }
 
-export async function fetchSessions(): Promise<SessionRow[]> {
-  const res = await fetch('/api/sessions', { headers: headers() });
+export async function fetchSessions(all = false): Promise<SessionRow[]> {
+  const q = all ? '?all=true' : '';
+  const res = await fetch(`/api/sessions${q}`, { headers: headers() });
   if (!res.ok) {
     throw new Error(`GET /api/sessions → ${res.status}`);
   }
